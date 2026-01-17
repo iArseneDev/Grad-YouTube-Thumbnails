@@ -349,6 +349,24 @@
     .download-btn {
       background-color: var(--success);
       color: white;
+      position: relative;
+    }
+    
+    .download-btn.loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    
+    .download-btn.loading::after {
+      content: '⬇️';
+      position: absolute;
+      right: 5px;
+      animation: downloadPulse 1s infinite;
+    }
+    
+    @keyframes downloadPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
     }
     
     .copy-url-btn {
@@ -814,11 +832,13 @@
   <script>
     // Initialize variables
     let currentVideoData = null;
-    let viewMode = 'grid'; // 'grid' or 'list'
+    let viewMode = localStorage.getItem('viewMode') || 'grid';
     let currentTheme = localStorage.getItem('theme') || 'light';
     let recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
     let isMultiUrlMode = false;
-    let fontSize = 100;
+    let fontSize = parseInt(localStorage.getItem('fontSize')) || 100;
+    let editorImage = null;
+    let editorCtx = null;
 
     // Initialize on load
     document.addEventListener('DOMContentLoaded', function() {
@@ -828,17 +848,16 @@
     function initApp() {
       document.getElementById('current-year').textContent = new Date().getFullYear();
       
-      // Apply saved theme
+      // Apply saved settings
       applyTheme(currentTheme);
+      applyViewMode();
+      document.body.style.fontSize = fontSize + '%';
       
       // Load recent searches
       loadRecentSearches();
       
       // Setup event listeners
       setupEventListeners();
-      
-      // Setup service worker for PWA
-      setupServiceWorker();
       
       // Setup keyboard shortcuts
       setupKeyboardShortcuts();
@@ -1108,12 +1127,12 @@
         const actions = document.createElement('div');
         actions.className = 'thumbnail-actions';
         
-        const downloadBtn = document.createElement('a');
+        const downloadBtn = document.createElement('button');
         downloadBtn.className = 'download-btn';
         downloadBtn.textContent = 'Download';
         downloadBtn.onclick = (e) => {
           e.preventDefault();
-          forceDownload(thumbUrl, `youtube-thumbnail-${data.videoId}-${res.id}.jpg`);
+          downloadThumbnail(thumbUrl, `youtube-thumbnail-${data.videoId}-${res.id}.jpg`, downloadBtn);
         };
         
         const copyUrlBtn = document.createElement('button');
@@ -1168,19 +1187,116 @@
       });
     }
 
+    // FIXED: Direct download using Canvas approach
+    async function downloadThumbnail(url, fileName, buttonElement) {
+      if (buttonElement) {
+        buttonElement.classList.add('loading');
+        buttonElement.disabled = true;
+      }
+      
+      try {
+        // Create an image element
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        
+        // Load the image
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = url + '?t=' + new Date().getTime(); // Cache busting
+        });
+        
+        // Create a canvas
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
+        // Draw image to canvas
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        
+        // Convert canvas to data URL and trigger download
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = fileName;
+        
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showCopySuccess(`✅ Downloaded: ${fileName}`);
+        
+      } catch (error) {
+        console.error('Canvas download failed:', error);
+        
+        // Fallback: Try fetch method
+        try {
+          const response = await fetch(url);
+          const blob = await response.blob();
+          const blobUrl = URL.createObjectURL(blob);
+          
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+          showCopySuccess(`✅ Downloaded (fallback): ${fileName}`);
+        } catch (fetchError) {
+          console.error('Fetch fallback failed:', fetchError);
+          showError('Failed to download thumbnail. Please try again.');
+        }
+      } finally {
+        if (buttonElement) {
+          buttonElement.classList.remove('loading');
+          buttonElement.disabled = false;
+        }
+      }
+    }
+
     async function downloadAllThumbnails() {
       if (!currentVideoData) return;
       
       const zip = new JSZip();
       const resolutions = ['maxresdefault', 'sddefault', 'hqdefault', 'mqdefault', 'default'];
+      const bulkBtn = event.target;
+      bulkBtn.textContent = 'Creating ZIP...';
+      bulkBtn.disabled = true;
       
       try {
         for (const res of resolutions) {
           const url = `https://img.youtube.com/vi/${currentVideoData.videoId}/${res}.jpg`;
-          const response = await fetch(url);
-          const blob = await response.blob();
-          zip.file(`youtube-thumbnail-${currentVideoData.videoId}-${res}.jpg`, blob);
+          
+          // Use canvas method for each image
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          
+          await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = url;
+          });
+          
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          
+          // Convert canvas to blob
+          canvas.toBlob((blob) => {
+            zip.file(`youtube-thumbnail-${currentVideoData.videoId}-${res}.jpg`, blob);
+          }, 'image/jpeg', 0.95);
         }
+        
+        // Small delay to ensure all blobs are added
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         const content = await zip.generateAsync({type: "blob"});
         const downloadUrl = URL.createObjectURL(content);
@@ -1194,24 +1310,44 @@
         
         showCopySuccess('All thumbnails downloaded as ZIP!');
       } catch (error) {
-        showError('Failed to create ZIP file');
+        console.error('ZIP creation failed:', error);
+        showError('Failed to create ZIP file. Please try individual downloads.');
+      } finally {
+        bulkBtn.textContent = '📥 Download All as ZIP';
+        bulkBtn.disabled = false;
       }
     }
 
     async function downloadSingleVideoThumbnails(videoId, title) {
       const zip = new JSZip();
       const resolutions = ['maxresdefault', 'sddefault', 'hqdefault', 'mqdefault', 'default'];
-      const safeTitle = title.replace(/[^\w\s]/gi, '').substring(0, 50);
+      const safeTitle = title.replace(/[^\w\s-]/gi, '').substring(0, 50);
       
       try {
         for (const res of resolutions) {
           const url = `https://img.youtube.com/vi/${videoId}/${res}.jpg`;
-          const response = await fetch(url);
-          if (response.ok) {
-            const blob = await response.blob();
+          
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          
+          await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = url;
+          });
+          
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          
+          canvas.toBlob((blob) => {
             zip.file(`${safeTitle}-${res}.jpg`, blob);
-          }
+          }, 'image/jpeg', 0.95);
         }
+        
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         const content = await zip.generateAsync({type: "blob"});
         const downloadUrl = URL.createObjectURL(content);
@@ -1238,15 +1374,6 @@
       ).join('\n');
       
       copyToClipboard(urls, 'All thumbnail URLs copied!');
-    }
-
-    function forceDownload(url, fileName) {
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
     }
 
     function copyVideoTitle(title) {
@@ -1288,7 +1415,10 @@
     }
 
     function showError(message) {
-      document.getElementById('results').innerHTML = `<div class="error">${message}</div>`;
+      const resultsDiv = document.getElementById('results');
+      if (resultsDiv) {
+        resultsDiv.innerHTML = `<div class="error">${message}</div>`;
+      }
     }
 
     function scrollToTitle() {
@@ -1328,7 +1458,15 @@
     function toggleViewMode() {
       viewMode = viewMode === 'grid' ? 'list' : 'grid';
       localStorage.setItem('viewMode', viewMode);
+      applyViewMode();
       
+      // Refresh display if there are results
+      if (currentVideoData) {
+        displayResults(currentVideoData);
+      }
+    }
+
+    function applyViewMode() {
       const viewIcon = document.getElementById('view-icon');
       const viewText = document.getElementById('view-text');
       
@@ -1338,11 +1476,6 @@
       } else {
         viewIcon.textContent = '📱';
         viewText.textContent = 'List View';
-      }
-      
-      // Refresh display if there are results
-      if (currentVideoData) {
-        displayResults(currentVideoData);
       }
     }
 
@@ -1412,9 +1545,6 @@
     }
 
     // Editor functionality
-    let editorImage = null;
-    let editorCtx = null;
-
     function openEditor(src, videoId, resolution) {
       editorImage = new Image();
       editorImage.crossOrigin = "anonymous";
@@ -1494,12 +1624,14 @@
     function saveEditedImage() {
       if (!editorCtx) return;
       const canvas = document.getElementById('editorCanvas');
-      const dataUrl = canvas.toDataURL('image/jpeg');
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
       const a = document.createElement('a');
       a.href = dataUrl;
       a.download = `edited-thumbnail-${currentVideoData?.videoId || 'custom'}.jpg`;
+      document.body.appendChild(a);
       a.click();
-      showCopySuccess('Edited image downloaded!');
+      document.body.removeChild(a);
+      showCopySuccess('✅ Edited image downloaded!');
     }
 
     // Accessibility functions
@@ -1513,13 +1645,7 @@
     function toggleHighContrast() {
       document.body.classList.toggle('high-contrast');
       localStorage.setItem('highContrast', document.body.classList.contains('high-contrast'));
-    }
-
-    // PWA Service Worker
-    function setupServiceWorker() {
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js').catch(console.error);
-      }
+      showCopySuccess('High contrast mode ' + (document.body.classList.contains('high-contrast') ? 'enabled' : 'disabled'));
     }
 
     // Keyboard Shortcuts
@@ -1536,17 +1662,8 @@
           e.preventDefault();
           copyVideoTitle(currentVideoData.title);
         }
-        
-        // Arrow keys for recent searches
-        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-          const recentItems = document.querySelectorAll('.recent-item');
-          if (recentItems.length > 0) {
-            e.preventDefault();
-            // Implementation for arrow navigation
-          }
-        }
       });
     }
   </script>
 </body>
-</html>
+ </html>
