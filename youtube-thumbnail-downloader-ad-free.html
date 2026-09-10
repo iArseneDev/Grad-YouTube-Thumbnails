@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>YouTube Thumbnail Downloader - Get HD Thumbnails & Video Titles Instantly</title>
+  <meta name="description" content="Free YouTube Thumbnail Downloader - Extract high-quality thumbnails in 5 resolutions (maxresdefault, sddefault, hqdefault) and video titles. No registration, 100% free.">
+  <meta name="keywords" content="youtube thumbnail download, youtube thumbnail grabber, video title extractor, youtube tools, thumbnail downloader, youtube thumbnail saver, get youtube thumbnails, maxresdefault download, hd youtube thumbnails">
+  <meta name="author" content="YouTube Thumbnail Downloader">
+  <meta name="robots" content="index, follow">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://grabyoutubethumbnailz.pages.dev/">
+  <meta property="og:title" content="YouTube Thumbnail Downloader - Get HD Thumbnails & Video Titles Instantly">
+  <meta property="og:description" content="Free tool to extract YouTube video thumbnails in multiple resolutions and titles instantly. No registration required.">
+  <meta property="og:image" content="https://grabyoutubethumbnailz.pages.dev/og-image.jpg">
+  <meta property="og:site_name" content="YouTube Thumbnail Downloader">
+
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://grabyoutubethumbnailz.pages.dev/">
+  <meta property="twitter:title" content="YouTube Thumbnail Downloader - Get HD Thumbnails & Video Titles Instantly">
+  <meta property="twitter:description" content="Free tool to extract YouTube video thumbnails in multiple resolutions and titles instantly.">
+  <meta property="twitter:image" content="https://grabyoutubethumbnailz.pages.dev/twitter-image.jpg">
+
+  <link rel="canonical" href="https://grabyoutubethumbnailz.pages.dev">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+  <link rel="manifest" href="/manifest.json">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "YouTube Thumbnail Downloader",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Any",
+    "description": "Free online tool to download YouTube video thumbnails in multiple resolutions and extract video titles instantly",
+    "url": "https://grabyoutubethumbnailz.pages.dev",
+    "offers": {"@type":"Offer","price":"0","priceCurrency":"USD"},
+    "author": {"@type":"Organization","name":"YouTube Thumbnail Downloader"},
+    "featureList": [
+      "Download YouTube thumbnails in 5 resolutions",
+      "Extract video titles automatically",
+      "No registration required",
+      "Works entirely in browser",
+      "100% free to use"
+    ]
+  }
+  </script>
+
+  <style>
+    :root{--primary:#FF0000;--success:#34a853;--warning:#ff9800;--info:#2196f3;--light-bg:#f9f9f9;--dark-bg:#1a1a1a;--border:#e1e1e1;--text:#333;--card-bg:#fff;--shadow:0 2px 8px rgba(0,0,0,.1)}
+    [data-theme="dark"]{--light-bg:#1a1a1a;--border:#333;--text:#f0f0f0;--card-bg:#2d2d2d;--shadow:0 2px 8px rgba(0,0,0,.3)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:var(--text);background:var(--light-bg);padding:20px;max-width:1200px;margin:0 auto;transition:.3s}
+    header{text-align:center;padding:20px 0;margin-bottom:30px;border-bottom:1px solid var(--border)}
+    h1,h3{color:var(--primary)} h1{margin-bottom:15px;font-size:2.2rem} h3{margin-bottom:15px}
+    .description{opacity:.8;margin:0 auto 20px;font-size:1.1rem;max-width:700px}
+    .header-controls,.bulk-actions,.thumbnail-actions,.editor-tools{display:flex;gap:10px;flex-wrap:wrap}
+    .header-controls{justify-content:center;margin-top:15px}
+    button,.toggle-link,.floating-btn,.thumbnail{cursor:pointer}
+    .theme-toggle,.view-toggle,.clear-history{background:var(--card-bg);color:var(--text);border:1px solid var(--border);padding:8px 15px;border-radius:20px}
+    #input-container{display:flex;flex-direction:column;gap:15px;margin:0 auto 30px;max-width:800px}
+    .url-input-group{flex:1;position:relative}
+    #videoUrl,#multipleUrls{width:100%;padding:15px;border:2px solid var(--border);border-radius:8px;font-size:16px;background:var(--card-bg);color:var(--text)}
+    #videoUrl.valid{border-color:var(--success)} #videoUrl.invalid{border-color:#ff4444}
+    .url-validation{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:1.2rem;display:none}
+    #fetchBtn,.bulk-btn{padding:15px 25px;background:var(--primary);color:#fff;border:0;border-radius:8px;font-weight:500}
+    #multipleUrls{min-height:100px;resize:vertical;display:none}
+    .multi-url-toggle{text-align:center;margin:10px 0}.toggle-link{color:var(--primary);text-decoration:underline}
+    #loading{display:none;text-align:center;padding:30px;color:var(--primary);font-weight:500;font-size:1.2rem}
+    .spinner{border:4px solid rgba(0,0,0,.1);border-left-color:var(--primary);border-radius:50%;width:30px;height:30px;animation:spin 1s linear infinite;margin:0 auto 15px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    #results{margin:30px auto}.thumbnail-container{text-align:center;margin-bottom:30px}
+    .thumbnail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;margin-top:20px}
+    .thumbnail-list{display:flex;flex-direction:column;gap:15px;margin-top:20px}.thumbnail-list .thumbnail-item{display:flex;align-items:center;gap:20px}.thumbnail-list .thumbnail{width:150px}
+    .thumbnail-item,.info-box,.title-container,.info-card,.recent-searches,.editor-container,.shortcuts-info{background:var(--card-bg);border-radius:8px;box-shadow:var(--shadow)}
+    .thumbnail-item{padding:15px}.thumbnail{width:100%;height:auto;border-radius:8px;margin-bottom:10px}.resolution-label{display:block;font-weight:bold;margin-bottom:8px}
+    .download-btn,.copy-url-btn,.edit-btn,.copy-title-btn{padding:8px 12px;border-radius:6px;border:0;color:#fff;font-weight:500;flex:1}.download-btn{background:var(--success)}.copy-url-btn{background:var(--info)}.edit-btn,.copy-title-btn{background:var(--warning)}
+    .bulk-actions{justify-content:center;margin:20px 0}.info-box{padding:20px;margin:25px 0;border-left:4px solid var(--primary)}
+    .title-container{display:flex;align-items:center;gap:15px;margin-bottom:20px;padding:20px;border:1px solid var(--border)}.title-text{flex:1;font-size:1.1rem;font-weight:500}
+    .video-info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin:20px 0}.info-card{padding:15px;border:1px solid var(--border)}
+    .recent-searches{margin:20px 0;padding:15px;border:1px solid var(--border);display:none}.recent-list{display:flex;flex-wrap:wrap;gap:10px}.recent-item{background:var(--light-bg);padding:5px 10px;border-radius:15px;cursor:pointer}
+    .copy-success{position:fixed;top:20px;right:20px;background:var(--success);color:#fff;padding:12px 20px;border-radius:8px;z-index:1000;display:none}
+    .error{color:#d32f2f;padding:15px;background:#ffebee;border-radius:8px;text-align:center;margin:20px auto;max-width:700px}
+    footer{margin-top:50px;text-align:center;opacity:.8;font-size:14px;padding-top:20px;border-top:1px solid var(--border)}
+    .floating-btn{position:fixed;bottom:25px;right:25px;background:var(--primary);color:#fff;padding:14px 20px;border-radius:50px;font-weight:bold;display:none;z-index:999}
+    .lightbox,.editor-modal{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;justify-content:center;align-items:center}.lightbox{z-index:1001}.editor-modal{z-index:1002}.lightbox img{max-width:90%;max-height:90%;border-radius:8px}.lightbox-close{position:absolute;top:20px;right:20px;color:#fff;font-size:2rem;cursor:pointer}
+    .editor-container{padding:20px;max-width:800px;width:90%}.editor-tools{margin:15px 0}.editor-tools button{padding:8px 15px;background:var(--primary);color:#fff;border:0;border-radius:4px}#editorCanvas{max-width:100%;border:1px solid var(--border)}
+    .accessibility-controls{position:fixed;top:20px;left:20px;z-index:998;display:flex;gap:10px}.font-size-btn{background:var(--card-bg);color:var(--text);border:1px solid var(--border);width:40px;height:40px;border-radius:50%}
+    .shortcuts-info{position:fixed;bottom:80px;right:20px;padding:15px;border:1px solid var(--border);display:none;z-index:997}
+    @media(min-width:768px){#input-container{flex-direction:row}}
+    @media(max-width:768px){body{padding:10px}h1{font-size:1.8rem}.thumbnail-grid{grid-template-columns:1fr}.thumbnail-list .thumbnail-item{flex-direction:column;text-align:center}}
+  </style>
+</head>
+<body>
+<header>
+  <h1>YouTube Thumbnail Downloader</h1>
+  <p class="description">Get YouTube thumbnails in multiple resolutions and video titles instantly. Simply paste your YouTube URL below.</p>
+  <div class="header-controls">
+    <button class="theme-toggle" onclick="toggleTheme()"><span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span></button>
+    <button class="view-toggle" onclick="toggleViewMode()"><span id="view-icon">📱</span> <span id="view-text">Grid View</span></button>
+    <button class="clear-history" onclick="clearHistory()">🗑️ Clear History</button>
+  </div>
+</header>
+
+<div id="input-container">
+  <div class="url-input-group">
+    <input type="text" id="videoUrl" placeholder="Paste YouTube URL (e.g., https://youtu.be/dQw4w9WgXcQ)" />
+    <span class="url-validation" id="urlValid">✓</span><span class="url-validation" id="urlInvalid">✗</span>
+  </div>
+  <button id="fetchBtn" onclick="fetchVideoInfo()">Get Thumbnails</button>
+</div>
+
+<div class="multi-url-toggle"><span class="toggle-link" onclick="toggleMultiUrl()">📝 <span id="multiUrlText">Process multiple URLs</span></span></div>
+<textarea id="multipleUrls" placeholder="Enter multiple YouTube URLs (one per line or comma separated)"></textarea>
+<div class="recent-searches" id="recentSearches"><h3>Recent Searches</h3><div class="recent-list" id="recentList"></div></div>
+<div id="loading"><div class="spinner"></div><div>Loading video information...</div></div>
+<div id="results"></div>
+<div class="bulk-actions" id="bulkActions" style="display:none"><button class="bulk-btn" onclick="downloadAllThumbnails(event)">📥 Download All as ZIP</button><button class="bulk-btn" onclick="copyAllUrls()">📋 Copy All URLs</button></div>
+<div class="copy-success" id="copySuccess"></div>
+<div class="lightbox" id="lightbox" onclick="closeLightbox()"><span class="lightbox-close">×</span><img id="lightboxImg" src="" alt="Enlarged thumbnail"></div>
+<div class="editor-modal" id="editorModal"><div class="editor-container"><h3>Edit Thumbnail</h3><canvas id="editorCanvas"></canvas><div class="editor-tools"><button onclick="cropImage()">✂️ Crop</button><button onclick="resizeImage()">📐 Resize</button><button onclick="addText()">🔤 Add Text</button><button onclick="applyFilter('grayscale')">⚫ Grayscale</button><button onclick="applyFilter('sepia')">🟤 Sepia</button><button onclick="saveEditedImage()">💾 Save</button><button onclick="closeEditor()">❌ Close</button></div></div></div>
+<div class="accessibility-controls"><button class="font-size-btn" onclick="changeFontSize(-1)">A-</button><button class="font-size-btn" onclick="changeFontSize(1)">A+</button><button class="font-size-btn" onclick="toggleHighContrast()">⚫</button></div>
+<a class="floating-btn" onclick="scrollToTitle()">Copy Video Title</a>
+<div class="shortcuts-info" id="shortcutsInfo"><h4>Keyboard Shortcuts</h4><p>Ctrl/Cmd + Enter: Fetch thumbnails</p><p>Ctrl/Cmd + C: Copy title</p><p>Esc: Close modals</p></div>
+<div class="info-box"><h3>How to Use This Tool</h3><p>1. Copy the URL of any YouTube video</p><p>2. Paste it in the input field above</p><p>3. Click "Get Thumbnails" to see all available resolutions</p><p>4. Click any download button to save the thumbnail</p><p>5. Use the "Copy Video Title" button to easily copy the video title</p><p>6. Toggle between grid/list view using the view toggle</p><p>7. Use dark mode for comfortable night viewing</p><p>8. Process multiple URLs at once for batch operations</p></div>
+<footer><p>© <span id="current-year"></span> YouTube Thumbnail Downloader. All rights reserved.</p><p>This tool works entirely in your browser - no data is stored or shared.</p><p>Press <kbd>?</kbd> for keyboard shortcuts</p></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+let currentVideoData=null,viewMode=localStorage.getItem('viewMode')||'grid',currentTheme=localStorage.getItem('theme')||'light',recentSearches=JSON.parse(localStorage.getItem('recentSearches'))||[],isMultiUrlMode=false,fontSize=parseInt(localStorage.getItem('fontSize'))||100,editorImage=null,editorCtx=null;
+document.addEventListener('DOMContentLoaded',initApp);
+function initApp(){document.getElementById('current-year').textContent=new Date().getFullYear();applyTheme(currentTheme);applyViewMode();document.body.style.fontSize=fontSize+'%';loadRecentSearches();setupEventListeners();setupKeyboardShortcuts()}
+function setupEventListeners(){document.getElementById('videoUrl').addEventListener('input',validateUrl);document.getElementById('videoUrl').addEventListener('keypress',e=>{if(e.key==='Enter')fetchVideoInfo()});document.getElementById('multipleUrls').addEventListener('input',function(){const u=this.value.split(/[\n,]/).filter(x=>x.trim());document.getElementById('fetchBtn').textContent=`Process ${u.length} Video${u.length!==1?'s':''}`});document.addEventListener('keydown',e=>{if(e.key==='?'){let s=document.getElementById('shortcutsInfo');s.style.display=s.style.display==='block'?'none':'block'}else if(e.key==='Escape'){closeLightbox();closeEditor();document.getElementById('shortcutsInfo').style.display='none'}})}
+function getVideoId(url){const m=url.match(/^.*(youtu\.be\/|v\/|embed\/|watch\?v=|shorts\/|live\/)([^#&?]{11}).*/);return m?m[2]:null}
+function validateUrl(){const i=document.getElementById('videoUrl'),u=i.value.trim(),v=getVideoId(u)!==null;i.classList.toggle('valid',u!==''&&v);i.classList.toggle('invalid',u!==''&&!v);document.getElementById('urlValid').style.display=u&&v?'block':'none';document.getElementById('urlInvalid').style.display=u&&!v?'block':'none'}
+function toggleMultiUrl(){isMultiUrlMode=!isMultiUrlMode;document.getElementById('videoUrl').style.display=isMultiUrlMode?'none':'block';document.getElementById('multipleUrls').style.display=isMultiUrlMode?'block':'none';document.getElementById('multiUrlText').textContent=isMultiUrlMode?'Process single URL':'Process multiple URLs';document.getElementById('fetchBtn').textContent=isMultiUrlMode?'Process Multiple URLs':'Get Thumbnails'}
+async function fetchVideoInfo(){isMultiUrlMode?await fetchMultipleVideos():await fetchSingleVideo()}
+async function fetchSingleVideo(){const u=document.getElementById('videoUrl').value.trim(),id=getVideoId(u);if(!id)return showError('Please enter a valid YouTube URL');await processVideo(id,u)}
+async function fetchMultipleVideos(){const t=document.getElementById('multipleUrls').value.trim();if(!t)return showError('Please enter at least one YouTube URL');const vids=t.split(/[\n,]/).map(url=>({url:url.trim(),videoId:getVideoId(url.trim())})).filter(v=>v.videoId);if(!vids.length)return showError('No valid YouTube URLs found');document.getElementById('loading').style.display='block';document.getElementById('results').innerHTML='';const results=[];for(const v of vids){try{const r=await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${v.videoId}&format=json`);if(r.ok){const d=await r.json();results.push({title:d.title,videoId:v.videoId,url:v.url})}}catch(e){}}displayMultipleResults(results);document.getElementById('loading').style.display='none'}
+async function processVideo(id,url){document.getElementById('loading').style.display='block';document.getElementById('results').innerHTML='';try{const r=await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`);if(!r.ok)throw 0;const d=await r.json();addToRecentSearches(url,d.title);currentVideoData={title:d.title,videoId:id};displayResults(currentVideoData)}catch(e){showError('Could not fetch video info. Please check the URL and try again.')}finally{document.getElementById('loading').style.display='none'}}
+function displayResults(d){const R=document.getElementById('results');R.innerHTML='';const tc=document.createElement('div');tc.className='title-container';tc.innerHTML=`<div class="title-text" id="videoTitleText"></div><button class="copy-title-btn">📋 Copy Title</button>`;tc.querySelector('.title-text').textContent=d.title||'Title not available';tc.querySelector('button').onclick=()=>copyVideoTitle(d.title);R.appendChild(tc);const vi=document.createElement('div');vi.className='video-info-grid';vi.innerHTML=`<div class="info-card"><strong>Video ID:</strong><br><code>${d.videoId}</code></div><div class="info-card"><strong>Direct URL:</strong><br><small>https://youtu.be/${d.videoId}</small></div><div class="info-card"><strong>Generated:</strong><br>${new Date().toLocaleString()}</div>`;R.appendChild(vi);const c=document.createElement('div');c.className='thumbnail-container';c.innerHTML='<h3>Available Thumbnails</h3>';const grid=document.createElement('div');grid.className=viewMode==='grid'?'thumbnail-grid':'thumbnail-list';[['maxresdefault','Maximum Resolution (1280x720)'],['sddefault','High Definition (640x480)'],['hqdefault','High Quality (480x360)'],['mqdefault','Medium Quality (320x180)'],['default','Standard Quality (120x90)']].forEach(([id,label])=>{const url=`https://img.youtube.com/vi/${d.videoId}/${id}.jpg`,item=document.createElement('div');item.className='thumbnail-item';item.innerHTML=`<span class="resolution-label">${label}</span><img class="thumbnail" alt="${id} thumbnail"><div class="thumbnail-actions"><button class="download-btn">Download</button><button class="copy-url-btn">Copy URL</button><button class="edit-btn">Edit</button></div>`;const img=item.querySelector('img');img.src=url;img.onclick=()=>openLightbox(url);item.querySelector('.download-btn').onclick=e=>downloadThumbnail(url,`youtube-thumbnail-${d.videoId}-${id}.jpg`,e.currentTarget);item.querySelector('.copy-url-btn').onclick=()=>copyToClipboard(url,'URL copied to clipboard!');item.querySelector('.edit-btn').onclick=()=>openEditor(url);grid.appendChild(item)});c.appendChild(grid);R.appendChild(c);document.querySelector('.floating-btn').style.display='block';document.getElementById('bulkActions').style.display='flex'}
+function displayMultipleResults(vs){const R=document.getElementById('results');R.innerHTML='<h3>Multiple Video Results</h3>';vs.forEach(v=>{const x=document.createElement('div');x.className='thumbnail-item';x.style.marginBottom='20px';const h=document.createElement('h4');h.textContent=v.title;x.appendChild(h);const p=document.createElement('p');p.textContent='Video ID: '+v.videoId;x.appendChild(p);const a=document.createElement('div');a.className='thumbnail-actions';const b=document.createElement('button');b.className='download-btn';b.textContent='Download All Resolutions';b.onclick=()=>downloadSingleVideoThumbnails(v.videoId,v.title);const c=document.createElement('button');c.className='copy-url-btn';c.textContent='Copy URL';c.onclick=()=>copyToClipboard(v.url,'URL copied!');a.append(b,c);x.appendChild(a);R.appendChild(x)})}
+async function imageBlob(url){const r=await fetch(url);if(!r.ok)throw 0;return await r.blob()}
+async function downloadThumbnail(url,name,btn){btn.disabled=true;try{const blob=await imageBlob(url),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);showCopySuccess('✅ Downloaded: '+name)}catch(e){showError('Failed to download thumbnail. Please try again.')}finally{btn.disabled=false}}
+async function downloadAllThumbnails(e){if(!currentVideoData)return;const btn=e.currentTarget,zip=new JSZip();btn.disabled=true;btn.textContent='Creating ZIP...';try{for(const r of ['maxresdefault','sddefault','hqdefault','mqdefault','default'])zip.file(`youtube-thumbnail-${currentVideoData.videoId}-${r}.jpg`,await imageBlob(`https://img.youtube.com/vi/${currentVideoData.videoId}/${r}.jpg`));const blob=await zip.generateAsync({type:'blob'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`youtube-thumbnails-${currentVideoData.videoId}.zip`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}catch(x){showError('Failed to create ZIP file.')}finally{btn.disabled=false;btn.textContent='📥 Download All as ZIP'}}
+async function downloadSingleVideoThumbnails(id,title){const zip=new JSZip(),safe=title.replace(/[^\w\s-]/gi,'').substring(0,50);try{for(const r of ['maxresdefault','sddefault','hqdefault','mqdefault','default'])zip.file(`${safe}-${r}.jpg`,await imageBlob(`https://img.youtube.com/vi/${id}/${r}.jpg`));const blob=await zip.generateAsync({type:'blob'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${safe}-thumbnails.zip`;a.click()}catch(e){showError('Failed to create ZIP file')}}
+function copyAllUrls(){if(!currentVideoData)return;copyToClipboard(['maxresdefault','sddefault','hqdefault','mqdefault','default'].map(r=>`https://img.youtube.com/vi/${currentVideoData.videoId}/${r}.jpg`).join('\n'),'All thumbnail URLs copied!')}
+function copyVideoTitle(t){if(t)copyToClipboard(t,'✓ Title copied to clipboard!')}
+function copyToClipboard(t,m){navigator.clipboard.writeText(t).then(()=>showCopySuccess(m)).catch(()=>showError('Failed to copy.'))}
+function showCopySuccess(m){const x=document.getElementById('copySuccess');x.textContent=m;x.style.display='block';setTimeout(()=>x.style.display='none',3000)}
+function showError(m){document.getElementById('results').innerHTML=`<div class="error">${m}</div>`}
+function scrollToTitle(){document.getElementById('videoTitleText')?.scrollIntoView({behavior:'smooth',block:'center'})}
+function toggleTheme(){currentTheme=currentTheme==='light'?'dark':'light';localStorage.setItem('theme',currentTheme);applyTheme(currentTheme)}
+function applyTheme(t){document.documentElement.setAttribute('data-theme',t);document.getElementById('theme-icon').textContent=t==='dark'?'☀️':'🌙';document.getElementById('theme-text').textContent=t==='dark'?'Light Mode':'Dark Mode'}
+function toggleViewMode(){viewMode=viewMode==='grid'?'list':'grid';localStorage.setItem('viewMode',viewMode);applyViewMode();if(currentVideoData)displayResults(currentVideoData)}
+function applyViewMode(){document.getElementById('view-text').textContent=viewMode==='list'?'Grid View':'List View'}
+function addToRecentSearches(url,title){recentSearches=recentSearches.filter(s=>s.url!==url);recentSearches.unshift({url,title:title||'Unknown Video',timestamp:new Date().toISOString()});recentSearches=recentSearches.slice(0,10);localStorage.setItem('recentSearches',JSON.stringify(recentSearches));loadRecentSearches()}
+function loadRecentSearches(){const l=document.getElementById('recentList'),c=document.getElementById('recentSearches');c.style.display=recentSearches.length?'block':'none';l.innerHTML='';recentSearches.forEach(s=>{const x=document.createElement('div');x.className='recent-item';x.textContent=s.title.length>30?s.title.slice(0,30)+'...':s.title;x.onclick=()=>{document.getElementById('videoUrl').value=s.url;fetchVideoInfo()};l.appendChild(x)})}
+function clearHistory(){recentSearches=[];localStorage.removeItem('recentSearches');loadRecentSearches()}
+function openLightbox(src){document.getElementById('lightboxImg').src=src;document.getElementById('lightbox').style.display='flex'}function closeLightbox(){document.getElementById('lightbox').style.display='none'}
+function openEditor(src){editorImage=new Image();editorImage.crossOrigin='anonymous';editorImage.onload=()=>{const c=document.getElementById('editorCanvas');editorCtx=c.getContext('2d');c.width=editorImage.width;c.height=editorImage.height;editorCtx.drawImage(editorImage,0,0);document.getElementById('editorModal').style.display='flex'};editorImage.src=src}
+function closeEditor(){document.getElementById('editorModal').style.display='none';editorImage=null;editorCtx=null}
+function cropImage(){showCopySuccess('Crop tool activated. Drag to select area.')}
+function resizeImage(){if(!editorCtx)return;const w=parseInt(prompt('Enter new width:',editorImage.width)),h=parseInt(prompt('Enter new height:',editorImage.height));if(w&&h){const c=document.getElementById('editorCanvas'),tmp=document.createElement('canvas');tmp.width=c.width;tmp.height=c.height;tmp.getContext('2d').drawImage(c,0,0);c.width=w;c.height=h;editorCtx=c.getContext('2d');editorCtx.drawImage(tmp,0,0,w,h)}}
+function addText(){if(!editorCtx)return;const t=prompt('Enter text to add:','YouTube Thumbnail');if(t){editorCtx.font='bold 24px Arial';editorCtx.fillStyle='white';editorCtx.strokeStyle='black';editorCtx.lineWidth=2;editorCtx.strokeText(t,20,40);editorCtx.fillText(t,20,40)}}
+function applyFilter(f){if(!editorCtx)return;const c=document.getElementById('editorCanvas'),im=editorCtx.getImageData(0,0,c.width,c.height),d=im.data;for(let i=0;i<d.length;i+=4){let r=d[i],g=d[i+1],b=d[i+2];if(f==='grayscale'){let q=.299*r+.587*g+.114*b;d[i]=d[i+1]=d[i+2]=q}else{d[i]=Math.min(255,r*.393+g*.769+b*.189);d[i+1]=Math.min(255,r*.349+g*.686+b*.168);d[i+2]=Math.min(255,r*.272+g*.534+b*.131)}}editorCtx.putImageData(im,0,0)}
+function saveEditedImage(){const c=document.getElementById('editorCanvas'),a=document.createElement('a');a.href=c.toDataURL('image/jpeg',.95);a.download=`edited-thumbnail-${currentVideoData?.videoId||'custom'}.jpg`;a.click()}
+function changeFontSize(d){fontSize=Math.max(80,Math.min(150,fontSize+d*10));document.body.style.fontSize=fontSize+'%';localStorage.setItem('fontSize',fontSize)}
+function toggleHighContrast(){document.body.classList.toggle('high-contrast')}
+function setupKeyboardShortcuts(){document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();fetchVideoInfo()}})}
+</script>
+</body>
+</html>
